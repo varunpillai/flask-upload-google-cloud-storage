@@ -35,7 +35,6 @@ class Google_Storage:
         Uploads a file to a given Cloud Storage bucket and returns the public url
         to the new object.
         """
-        filename = self.clean_filename(filename)
 
         client = self.storage_client
         bucket = client.bucket(self.bucket_name)
@@ -54,17 +53,10 @@ class Google_Storage:
             url = url.decode('utf-8')
 
         return url
+    
+    def delete_blob(self, blob_name):
+        """Deletes a blob from the bucket."""
+        bucket = self.storage_client.get_bucket(self.bucket_name)
+        blob = bucket.blob(blob_name)
 
-    def clean_filename(self, filename):
-        import unicodedata
-        import string
-
-        whitelist = "-_.() %s%s" % (string.ascii_letters, string.digits)
-        # replace spaces
-        filename = filename.replace(" ",'_')
-        
-        # keep only valid ascii chars
-        cleaned_filename = unicodedata.normalize('NFKD', filename).encode('ASCII', 'ignore').decode()
-        
-        # keep only whitelisted chars
-        return ''.join(c for c in cleaned_filename if c in whitelist)
+        return blob.delete()

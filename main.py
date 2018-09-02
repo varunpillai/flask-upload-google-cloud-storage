@@ -29,3 +29,9 @@ def upload_file():
         )
         return render_template('upload_file.html', files=google_storage.list_blobs(), public_url=public_url)
     return render_template('upload_file.html', files=google_storage.list_blobs())
+
+@app.route('/delete_file/<file_name>')
+def delete_file(file_name):
+    google_storage = Google_Storage('movti-interview')
+    google_storage.delete_blob(file_name)
+    return render_template('upload_file.html', files=google_storage.list_blobs(), file_deleted_name=file_name)

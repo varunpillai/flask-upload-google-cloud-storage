@@ -1,24 +1,85 @@
 <!doctype html>
-<title>Movti Interview - Upload new File</title>
+<head>
+    <title>Movti Interview - Upload new File</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">      
+</head>
 
-<nav>
-  <h1>Movti Interview - Upload new File</h1>
-  <form method=post enctype=multipart/form-data>
-    <p><input type=file name=file>
-       <input type=submit value=Upload>
-  </form>
+<div class="container">
+    <nav>
+        <h1 class="text-center">Movti Interview - Upload new File</h1>
 
-  {% if files %}
-    <ul>
-    {% for file in files %}
-        <li><a href="{{file.public_url}}" target="_blanked">{{file.name}}</a></li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-</nav>
+        {% if public_url %}
+            <div class="alert alert-success" role="alert">
+                File Public Url: <a href="{{public_url}}" target="_blanked">{{public_url}}</a>
+            </div>
+        {% endif %}
+        <form method=post enctype=multipart/form-data>
+            <div class="form-group">
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" name="file" id="file_upload">
+                        <label class="custom-file-label" for="file_upload">Choose file</label>
+                    </div>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="submit">Enviar</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    
+        <ul class="list-group">
 
-{% if public_url %}
-    <script>
-        alert("Upload public url: {{public_url}}");
-    </script>
-{% endif %}
+            {% for file in files %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-10"><a href="{{file.public_url}}" target="_blanked">{{file.name}}</a></div>
+                        <div class="col-md-2 text-right"><button type="button" class="btn btn-danger" onclick="delete_file_modal('{{file.name}}')">Delete</button></div>
+                    </div>
+                </li>
+            {% else %}
+                <h3 class="text-center">Nenhum arquivo para listar !!</h3>
+            {% endfor %}
+        </ul>
+    </nav>
+</div>
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Delete File</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            Você tem certeza que deseja excluir o arquivo "<span id="file_delete_name"></span>?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="delete_file()">Delete</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function delete_file_modal(file_name){
+        $('#modal').find('#file_delete_name').html(file_name);
+        $('#modal').modal('toggle');
+    }
+
+    function delete_file(){
+        file_name = $('#modal').find('#file_delete_name').html();
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/delete_file/"+file_name, true);
+        xhttp.send();
+        $('#modal').modal('hide');
+        window.location.href = "/";
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
