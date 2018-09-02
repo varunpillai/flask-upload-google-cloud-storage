@@ -1,0 +1,56 @@
+<!doctype html>
+<div class="container">
+    <nav id="upload_files_list">
+        <ul class="list-group">
+
+            {% for file in files %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-10"><a href="{{file.public_url}}" target="_blanked">{{file.name}}</a></div>
+                        <div class="col-md-2 text-right"><button type="button" class="btn btn-danger" onclick="delete_file_modal('{{file.name}}')">Delete</button></div>
+                    </div>
+                </li>
+            {% else %}
+                <h3 class="text-center">Nenhum arquivo para listar !!</h3>
+            {% endfor %}
+        </ul>
+    </nav>
+</div>
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalTitle">Delete File</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            Você tem certeza que deseja excluir o arquivo "<span id="file_delete_name"></span>?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="delete_file()">Delete</button>
+        </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function delete_file_modal(file_name){
+        $('#modal').find('#file_delete_name').html(file_name);
+        $('#modal').modal('toggle');
+    }
+
+    function delete_file(){
+        file_name = $('#modal').find('#file_delete_name').html();
+
+        $.ajax({
+            url: "/delete_file/" + file_name
+        }).done(function() {
+            $('#modal').modal('hide');
+            update_list_files();
+        });
+    }
+</script>
