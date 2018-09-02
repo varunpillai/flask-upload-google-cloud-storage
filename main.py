@@ -1,24 +1,38 @@
+import os
+from flask import Flask, request
 from GoogleStorage import Google_Storage
-import codecs
-import mimetypes
+from werkzeug.utils import secure_filename
 
-def upload_image_file(file):
-    """
-    Upload the user-uploaded file to Google Cloud Storage and retrieve its
-    publicly-accessible URL.
-    """
-    if not file:
-        return None
+app = Flask(__name__)
 
-    google_storage = Google_Storage('movti-interview')
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        file.filename = secure_filename(file.filename)
+        google_storage = Google_Storage('movti-interview')
 
-    public_url = google_storage.upload_file(
-        file.read(),
-        file.name,
-        mimetypes.MimeTypes().guess_type(file.name)[0]
-    )
-
-    return public_url
-
-with codecs.open('balao.jpeg', "r",encoding='utf-8', errors='ignore') as f:
-    print(upload_image_file(f))
+        public_url = google_storage.upload_file(
+            file.read(),
+            file.filename,
+            file.content_type
+        )
+        return 'Public URL:' + public_url
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <p><input type=file name=file>
+         <input type=submit value=Upload>
+    </form>
+    '''
