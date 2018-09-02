@@ -1,3 +1,4 @@
 credentials-storage-admin.json
 __pycache__/
 interview-env/
+.vscode/

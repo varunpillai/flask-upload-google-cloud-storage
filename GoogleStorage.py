@@ -2,19 +2,20 @@ from google.cloud import storage
 
 class Google_Storage:
 
-    def __init__(self):
+    def __init__(self, bucket_name):
         self.storage_client = storage.Client.from_service_account_json('credentials-storage-admin.json')
+        self.bucket_name = bucket_name
 
-    def create_bucket(self, bucket_name):
+    def create_bucket(self):
         
         """Creates a new bucket."""
-        bucket = self.storage_client.create_bucket(bucket_name)
+        bucket = self.storage_client.create_bucket(self.bucket_name)
         print('Bucket {} created'.format(bucket.name))
 
-    def delete_bucket(self, bucket_name):
+    def delete_bucket(self):
 
         """Deletes a bucket. The bucket must be empty."""
-        bucket = self.storage_client.get_bucket(bucket_name)
+        bucket = self.storage_client.get_bucket(self.bucket_name)
         bucket.delete()
         print('Bucket {} deleted'.format(bucket.name))
 
@@ -29,12 +30,10 @@ class Google_Storage:
         Uploads a file to a given Cloud Storage bucket and returns the public url
         to the new object.
         """
-        #_check_extension(filename, current_app.config['ALLOWED_EXTENSIONS'])
-        #current_app.config['CLOUD_STORAGE_BUCKET']
         filename = self.clean_filename(filename)
 
         client = self.storage_client
-        bucket = client.bucket('movti-interview')
+        bucket = client.bucket(self.bucket_name)
         blob = bucket.blob(filename)
 
         blob.upload_from_string(

@@ -10,7 +10,7 @@ def upload_image_file(file):
     if not file:
         return None
 
-    google_storage = Google_Storage()
+    google_storage = Google_Storage('movti-interview')
 
     public_url = google_storage.upload_file(
         file.read(),
