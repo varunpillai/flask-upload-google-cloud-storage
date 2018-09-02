@@ -22,8 +22,13 @@ class Google_Storage:
     def list_buckets(self):
         
         """List Buckets."""
-        for bucket in self.storage_client.list_buckets():
-            print(bucket)
+        return self.storage_client.list_buckets()
+
+    def list_blobs(self):
+        """Lists all the blobs in the bucket."""
+        bucket = self.storage_client.get_bucket(self.bucket_name)
+
+        return bucket.list_blobs()
 
     def upload_file(self, file_stream, filename, content_type):
         """
