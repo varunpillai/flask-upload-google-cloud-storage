@@ -1,6 +1,11 @@
 <!doctype html>
+
+<div class="d-none" id="loading-gif">
+    {% include 'loading_gif.html' %}
+</div>
+
 <div class="container">
-    <nav id="upload_files_list">
+    <nav id="upload_files_list" class="col-md-12 mt-2">
         <ul class="list-group">
 
             {% for file in files %}
@@ -46,11 +51,16 @@
     function delete_file(){
         file_name = $('#modal').find('#file_delete_name').html();
 
-        $.ajax({
-            url: "/delete_file/" + file_name
-        }).done(function() {
-            $('#modal').modal('hide');
-            update_list_files();
+        $('#upload-form').ajaxSubmit({
+            url: "/delete_file/" + file_name,
+            type: 'GET',
+            beforeSend: function() {
+                $('#modal').find('.modal-body').html($('#loading-gif').html());
+            },
+            complete: function(xhr) {
+                $('#modal').modal('hide');
+                update_list_files();
+            }
         });
     }
 </script>

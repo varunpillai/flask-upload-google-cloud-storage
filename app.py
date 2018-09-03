@@ -4,11 +4,18 @@ from GoogleStorage import Google_Storage
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.run(debug=True)
+
+if __name__ == '__main__':
+    app.run(debug=True,host='0.0.0.0')
 
 @app.route('/', methods=['GET'])
 def upload_file():
     return render_template('upload_file.html')
+
+@app.route('/list_buckets', methods=['GET'])
+def list_buckets():
+    google_storage = Google_Storage('movti-interview')
+    return google_storage.list_buckets_names()
 
 @app.route('/list_files', methods=['GET'])
 def list_files():

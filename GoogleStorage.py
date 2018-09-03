@@ -24,6 +24,11 @@ class Google_Storage:
         """List Buckets."""
         return self.storage_client.list_buckets()
 
+    def list_buckets_names(self):
+        
+        """List Buckets."""
+        return [ bucket.name for bucket in self.storage_client.list_buckets()]
+
     def list_blobs(self):
         """Lists all the blobs in the bucket."""
         bucket = self.storage_client.get_bucket(self.bucket_name)
